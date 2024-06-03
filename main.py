@@ -136,10 +136,14 @@ async def get_recommendations(skip: int = Query(0), db: Session = Depends(get_db
     return crud.get_books(db, skip=skip * 20, limit=12)
 
 
-@app.get("/image")
-async def get_image(name: str = Query(None)):
+@app.get("/books/image")
+async def get_books_image(name: str = Query(None)):
     response = FileResponse(f"./imagine_books/{name}.jpg")
     return response
+
+@app.get("/movies/image")
+async def get_movies_image(name: str = Query(None)):
+    pass
 
 
 @app.get("/movies")
