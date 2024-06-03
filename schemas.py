@@ -14,3 +14,21 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class BookBase(BaseModel):
+    ISBN: str
+    Name: str
+    page: str
+    Age: str
+    URL: str
+    Genres: str
+    Topic: str
+    Rating: str
+    Number_of_ratings: str
+    Description: str
+    Author: str
+    Similars: str
+
+    class Config:
+        orm_mode = True

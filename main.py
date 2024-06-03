@@ -4,7 +4,8 @@ from datetime import timedelta
 from typing import Annotated
 
 import jwt
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, Query
+from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError
 import crud, models, schemas, auth
@@ -117,7 +118,7 @@ async def read_users_me(
     return current_user
 
 
-@app.get("/books")
+@app.get("/recommendations")
 async def get_books():
     pass
 
@@ -126,4 +127,13 @@ async def get_books():
 async def get_movies():
     pass
 
-@app.get("/")
+
+@app.get("/books")
+async def get_recommendations(db: Session = Depends(get_db)):
+    return crud.get_books(db)
+
+
+@app.get("/image")
+async def get_image(name: str = Query(None)):
+    response = FileResponse(f"./imagine_books/{name}.jpg")
+    return response

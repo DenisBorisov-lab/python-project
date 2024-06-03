@@ -26,3 +26,10 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def get_books(db: Session, skip: int = 0, limit: int = 20):
+    books = db.query(models.Book).offset(0).limit(limit).all()
+    for book in books:
+        book.Rating = round(float(book.Rating[:-1]))
+    return books
