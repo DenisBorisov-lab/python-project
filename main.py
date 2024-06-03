@@ -115,3 +115,8 @@ async def read_users_me(
         current_user: Annotated[auth.User, Depends(get_current_active_user)],
 ):
     return current_user
+
+@app.get("/books")
+async def get_books():
+    pass
+
