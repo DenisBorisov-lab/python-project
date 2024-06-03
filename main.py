@@ -1,3 +1,5 @@
+import os.path
+
 from sqlalchemy.orm import Session
 
 from datetime import timedelta
@@ -109,13 +111,21 @@ async def get_recommendations(skip: int = Query(0), db: Session = Depends(get_db
 
 @app.get("/books/image")
 async def get_books_image(name: str = Query(None)):
-    response = FileResponse(f"./imagine_books/{name}.jpg")
+    p = f"./images_books/{name}.jpg"
+    if not os.path.exists(p):
+        p = f"./images_books/Этика.jpg"
+
+    response = FileResponse(p)
     return response
 
 
 @app.get("/movies/image")
 async def get_movies_image(name: str = Query(None)):
-    response = FileResponse(f'')
+    p = f"./images_films/{name}.jpg"
+    if not os.path.exists(p):
+        p = f"./images_films/Человек-паук.jpg"
+
+    response = FileResponse(p)
     return response
 
 

@@ -31,7 +31,7 @@ function decreasePage() {
 <template>
   <div>
     <div class="grid grid-cols-2 gap-8" v-if="!pending">
-      <Card v-for="film in films" :id="film.name" :title="film.name" :description="truncate(film.description.replace(' Read all', ''))" :genres="normalizeGenres(film.genres)" :author="film.release_date" field-name="Дата премьеры" :field-value="film.release_date":rating="film.rating" :rating-max="10" :img-route="'/image?name=' + encodeURI(film.name)" />
+      <Card v-for="film in films" :id="film.name" :title="film.name" :description="truncate(film.description.replace(' Read all', ''))" :genres="normalizeGenres(film.genres)" :author="film.release_date" field-name="Дата премьеры" :field-value="film.release_date":rating="film.rating" :rating-max="10" :img-route="'/movies/image?name=' + encodeURI(film.name)" />
     </div>
     <div v-else>
       <p class="text-center">Загрузка фильмов...</p>
