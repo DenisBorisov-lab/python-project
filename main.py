@@ -7,6 +7,7 @@ import jwt
 from fastapi import Depends, FastAPI, HTTPException, status, Query
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from jwt.exceptions import InvalidTokenError
 import crud, models, schemas, auth
 from database import SessionLocal, engine
@@ -14,6 +15,12 @@ from database import SessionLocal, engine
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,  # noqa
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Dependency
