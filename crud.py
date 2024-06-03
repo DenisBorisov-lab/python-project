@@ -29,9 +29,9 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 
 def get_books(db: Session, skip: int = 0, limit: int = 20):
-    books = db.query(models.Book).offset(0).limit(limit).all()
+    books = db.query(models.Book).offset(skip).limit(limit).all()
     for book in books:
-        book.Rating = round(float(book.Rating[:-1]))
+        book.Rating = float(book.Rating[:-1])
     return books
 
 
