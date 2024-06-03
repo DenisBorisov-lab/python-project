@@ -116,7 +116,14 @@ async def read_users_me(
 ):
     return current_user
 
+
 @app.get("/books")
 async def get_books():
     pass
 
+
+@app.get("/movies")
+async def get_movies():
+    pass
+
+@app.get("/")
