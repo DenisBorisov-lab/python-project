@@ -1,17 +1,18 @@
 import os.path
-
-from sqlalchemy.orm import Session
-
 from datetime import timedelta
 from typing import Annotated
 
 import jwt
 from fastapi import Depends, FastAPI, HTTPException, status, Query
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi.middleware.cors import CORSMiddleware
 from jwt.exceptions import InvalidTokenError
-import crud, models, schemas, auth
+from sqlalchemy.orm import Session
+
+import auth
+import crud
+import models
 from database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
@@ -98,15 +99,9 @@ async def login_for_access_token(
     return auth.Token(access_token=access_token, token_type="bearer")
 
 
-@app.get("/recommendations")
-async def get_books(db: Session = Depends(get_db)):
-    books = sorted(crud.get_books(db, skip=0, limit=500), key=lambda book: book.Rating, reverse=True)
-    return books
-
-
 @app.get("/books")
-async def get_recommendations(skip: int = Query(0), db: Session = Depends(get_db)):
-    return crud.get_books(db, skip=skip * 20, limit=12)
+async def get_books(skip: int = Query(0), db: Session = Depends(get_db)):
+    return crud.get_books(db, skip=skip * 12, limit=12)
 
 
 @app.get("/books/image")
@@ -119,6 +114,18 @@ async def get_books_image(name: str = Query(None)):
     return response
 
 
+@app.get("/recommendations/books")
+async def get_recommendations_books(db: Session = Depends(get_db)):
+    books = sorted(crud.get_books(db, skip=0, limit=500), key=lambda book: book.Rating, reverse=True)[:10]
+    return books
+
+
+@app.get("/movies")
+async def get_movies(skip: int = Query(0), db: Session = Depends(get_db)):
+    movies = crud.get_movies(db, skip=skip * 12, limit=12)
+    return movies
+
+
 @app.get("/movies/image")
 async def get_movies_image(name: str = Query(None)):
     p = f"./images_films/{name}.jpg"
@@ -129,7 +136,8 @@ async def get_movies_image(name: str = Query(None)):
     return response
 
 
-@app.get("/movies")
-async def get_movies(skip: int = Query(0), db: Session = Depends(get_db)):
-    movies = crud.get_movies(db, skip=skip * 20, limit=12)
+@app.get("/recommendations/movies")
+async def get_recommendations_movies(db: Session = Depends(get_db)):
+    movies = sorted(crud.get_movies(db, skip=0, limit=500), key=lambda movie: (movie.rating, hash(movie.release_date)),
+                    reverse=True)[:10]
     return movies

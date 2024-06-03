@@ -12,6 +12,9 @@ function truncate(s: string) {
 }
 
 function normalizeGenres(s: string) {
+  if (!s) {
+    return 'Не указаны'
+  }
   return s.split(",").map(x => x.trim()).map(x => x.at(0)!.toUpperCase() + x.substring(1));
 }
 
