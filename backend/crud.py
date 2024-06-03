@@ -2,8 +2,8 @@ import hashlib
 
 from sqlalchemy.orm import Session
 
-import models
-import schemas
+import backend.models as models
+import backend.schemas as schemas
 
 
 def get_user(db: Session, user_id: int):

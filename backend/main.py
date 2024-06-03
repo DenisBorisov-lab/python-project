@@ -9,11 +9,11 @@ from fastapi.responses import FileResponse
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy.orm import Session
 
-import auth
-import crud
-import models
-import schemas
-from database import SessionLocal, engine
+import backend.auth as auth
+import backend.crud as crud
+import backend.models as models
+import backend.schemas as schemas
+from backend.database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -105,9 +105,9 @@ async def get_books(skip: int = Query(0), db: Session = Depends(get_db)):
 
 @app.get("/books/image")
 async def get_books_image(name: str = Query(None)):
-    p = f"./images_books/{name}.jpg"
+    p = f"./backend/images_books/{name}.jpg"
     if not os.path.exists(p):
-        p = f"./images_books/Этика.jpg"
+        p = f"./backend/images_books/Этика.jpg"
 
     response = FileResponse(p)
     return response
@@ -127,9 +127,9 @@ async def get_movies(skip: int = Query(0), db: Session = Depends(get_db)):
 
 @app.get("/movies/image")
 async def get_movies_image(name: str = Query(None)):
-    p = f"./images_films/{name}.jpg"
+    p = f"./backend/images_films/{name}.jpg"
     if not os.path.exists(p):
-        p = f"./images_films/Человек-паук.jpg"
+        p = f"./backend/images_films/Человек-паук.jpg"
 
     response = FileResponse(p)
     return response
