@@ -123,10 +123,6 @@ async def get_books():
     pass
 
 
-@app.get("/movies")
-async def get_movies():
-    pass
-
 
 @app.get("/books")
 async def get_recommendations(db: Session = Depends(get_db)):
@@ -137,3 +133,9 @@ async def get_recommendations(db: Session = Depends(get_db)):
 async def get_image(name: str = Query(None)):
     response = FileResponse(f"./imagine_books/{name}.jpg")
     return response
+
+
+@app.get("/movies")
+async def get_movies(db: Session = Depends(get_db)):
+    movies = crud.get_movies(db)
+    return movies

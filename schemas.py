@@ -32,3 +32,20 @@ class BookBase(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class MovieBase(BaseModel):
+    id: int
+    name: str
+    runtime: str
+    genres: str
+    number_of_ratings: str
+    description: str
+    release_date: str
+    country: str
+    budget: str
+    keywords: str
+    similars: str
+
+    class Config:
+        orm_mode = True

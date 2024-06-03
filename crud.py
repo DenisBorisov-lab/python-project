@@ -33,3 +33,10 @@ def get_books(db: Session, skip: int = 0, limit: int = 20):
     for book in books:
         book.Rating = round(float(book.Rating[:-1]))
     return books
+
+
+def get_movies(db: Session, skip: int = 0, limit: int = 20):
+    movies = db.query(models.Movie).offset(skip).limit(limit).all()
+    for movie in movies:
+        movie.rating = float(movie.rating.replace(",", "."))
+    return movies

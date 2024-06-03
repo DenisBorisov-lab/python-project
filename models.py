@@ -26,3 +26,20 @@ class Book(Base):
     Description = Column(String, nullable=True)
     Author = Column(String, nullable=True)
     Similars = Column(String, nullable=True)
+
+
+class Movie(Base):
+    __tablename__ = "films"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=True)
+    runtime = Column(String, nullable=True)
+    genres = Column(String, nullable=True)
+    rating = Column(String, nullable=True)
+    number_of_ratings = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+    release_date = Column(String, nullable=True)
+    country = Column(String, nullable=True)
+    budget = Column(String, nullable=True)
+    key_words = Column(String, nullable=True)
+    similars = Column(String, nullable=True)
