@@ -1,3 +1,5 @@
+import os.path
+
 import requests
 
 import models
@@ -8,7 +10,7 @@ token = '784be3af-2393-4535-8562-4cebc84aeeea'
 db = SessionLocal()
 films = db.query(models.Movie).all()
 
-for film in films:
+for i, film in enumerate(films):
     r = requests.get('https://kinopoiskapiunofficial.tech/api/v2.2/films', params={
         'keyword': film.name
     }, headers={
@@ -23,6 +25,14 @@ for film in films:
     item = j['items'][0]
     url = item['posterUrl']
 
-    r = requests.get(url)
-    with open()
+    p = f'./images_films/{film.name}.jpg'
+    if os.path.exists(p):
+        print('skipping!!!!')
+        continue
 
+    r = requests.get(url)
+    with open(f'./images_films/{film.name}.jpg', 'wb') as f:
+        f.write(r.content)
+
+    print(item, 'done.')
+    print(i, '/', len(films) - 1)
