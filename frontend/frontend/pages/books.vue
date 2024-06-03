@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type {Book} from "~/models";
 
 const page = ref(1);
@@ -33,8 +33,10 @@ function decreasePage() {
 
 <template>
   <div>
-    <div class="grid grid-cols-2 gap-8" v-if="!pending">
-      <Card v-for="book in books" :id="book.Name" :title="book.Name" :description="truncate(book.Description)" :genres="normalizeGenres(book.Genres)" field-name="Автор" :field-value="book.Author" :rating="book.Rating" :rating-max="5" :img-route="'/books/image?name=' + encodeURI(book.Name)" />
+    <div v-if="!pending" class="grid grid-cols-2 gap-8">
+      <Card v-for="book in books" :id="book.Name" :description="truncate(book.Description)" :field-value="book.Author"
+            :genres="normalizeGenres(book.Genres)" :img-route="'/books/image?name=' + encodeURI(book.Name)" :rating="book.Rating" :rating-max="5"
+            :title="book.Name" field-name="Автор"/>
     </div>
     <div v-else>
       <p class="text-center">Загрузка книг...</p>
@@ -42,8 +44,12 @@ function decreasePage() {
   </div>
   <div class="fixed left-0 bottom-20 flex justify-center w-full">
     <div class="flex space-x-16 w-full justify-center">
-      <div class="bg-white/80 backdrop-blur-lg border py-2 px-4 rounded-lg shadow-sm" :class="canDecrease ? 'cursor-pointer' : 'cursor-not-allowed'" @click="decreasePage"><</div>
-      <div class="bg-white/80 backdrop-blur-lg border py-2 px-4 rounded-lg shadow-sm cursor-pointer" @click="increasePage">></div>
+      <div :class="canDecrease ? 'cursor-pointer' : 'cursor-not-allowed'"
+           class="bg-white/80 backdrop-blur-lg border py-2 px-4 rounded-lg shadow-sm" @click="decreasePage"><
+      </div>
+      <div class="bg-white/80 backdrop-blur-lg border py-2 px-4 rounded-lg shadow-sm cursor-pointer"
+           @click="increasePage">>
+      </div>
     </div>
   </div>
 </template>

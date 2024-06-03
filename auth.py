@@ -23,9 +23,12 @@ class User(BaseModel):
     username: str
 
 
+class TokenInner(BaseModel):
+    accessToken: str
+
+
 class Token(BaseModel):
-    access_token: str
-    token_type: str
+    tokens: TokenInner
 
 
 class TokenData(BaseModel):

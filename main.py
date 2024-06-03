@@ -3,16 +3,16 @@ from datetime import timedelta
 from typing import Annotated
 
 import jwt
-from fastapi import Depends, FastAPI, HTTPException, status, Query
+from fastapi import Depends, FastAPI, HTTPException, status, Query, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from fastapi.security import OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy.orm import Session
 
 import auth
 import crud
 import models
+import schemas
 from database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
@@ -35,7 +35,9 @@ def get_db():
         db.close()
 
 
-async def get_current_user(token: Annotated[str, Depends(auth.oauth2_scheme)], db: Session = Depends(get_db)):
+async def get_current_user(authorization: Annotated[str, Header()], db: Session = Depends(get_db)):
+    token = '' if 'Bearer' not in authorization else authorization.split('Bearer ')[-1]
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -55,24 +57,16 @@ async def get_current_user(token: Annotated[str, Depends(auth.oauth2_scheme)], d
     return user
 
 
-async def get_current_active_user(
-        current_user: Annotated[auth.User, Depends(get_current_user)]
-):
-    if current_user.disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    return current_user
-
-
-@app.post("/register")
-async def register_user(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)
+@app.post("/api/auth/register")
+async def register_user(req: schemas.UserCreate, db: Session = Depends(get_db)
                         ) -> auth.Token:
-    access = auth.register_user(db, form_data)
+    access = auth.register_user(db, req)
     if access:
         access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = auth.create_access_token(
-            data={"sub": form_data.username}, expires_delta=access_token_expires
+            data={"sub": req.username}, expires_delta=access_token_expires
         )
-        return auth.Token(access_token=access_token, token_type="bearer")
+        return auth.Token(tokens=auth.TokenInner(accessToken=access_token))
     else:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -81,11 +75,11 @@ async def register_user(form_data: Annotated[OAuth2PasswordRequestForm, Depends(
         )
 
 
-@app.post("/login")
+@app.post("/api/auth/login")
 async def login_for_access_token(
-        form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)
+        req: schemas.UserCreate, db: Session = Depends(get_db)
 ) -> auth.Token:
-    user = auth.authenticate_user(db, form_data.username, form_data.password)
+    user = auth.authenticate_user(db, req.username, req.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -96,7 +90,12 @@ async def login_for_access_token(
     access_token = auth.create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return auth.Token(access_token=access_token, token_type="bearer")
+    return auth.Token(tokens=auth.TokenInner(accessToken=access_token))
+
+
+@app.get('/api/auth/me')
+async def get_self_user(user=Depends(get_current_user)):
+    return user
 
 
 @app.get("/books")

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type {Book, Film} from "~/models";
 
 const {data: books, pending: booksPending} = useFetch<Book[]>(() => `http://localhost:8000/recommendations/books`)
@@ -20,8 +20,10 @@ function normalizeGenres(s: string) {
   <div class="flex flex-col space-y-4">
     <h1 class="font-bold text-xl">Книги (ТОП 10)</h1>
     <div>
-      <div class="grid grid-cols-2 gap-8" v-if="!booksPending">
-        <Card v-for="book in books" :id="book.Name" :title="book.Name" :description="truncate(book.Description)" :genres="normalizeGenres(book.Genres)" field-name="Автор" :field-value="book.Author" :rating="book.Rating" :rating-max="5" :img-route="'/books/image?name=' + encodeURI(book.Name)" />
+      <div v-if="!booksPending" class="grid grid-cols-2 gap-8">
+        <Card v-for="book in books" :id="book.Name" :description="truncate(book.Description)" :field-value="book.Author"
+              :genres="normalizeGenres(book.Genres)" :img-route="'/books/image?name=' + encodeURI(book.Name)" :rating="book.Rating" :rating-max="5"
+              :title="book.Name" field-name="Автор"/>
       </div>
       <div v-else>
         <p class="text-center">Загрузка...</p>
@@ -29,8 +31,11 @@ function normalizeGenres(s: string) {
     </div>
     <h1 class="font-bold text-xl">Фильмы (ТОП 10)</h1>
     <div>
-      <div class="grid grid-cols-2 gap-8" v-if="!filmsPending">
-        <Card v-for="film in films" :id="film.name" :title="film.name" :description="truncate(film.description.replace(' Read all', ''))" :genres="normalizeGenres(film.genres)" :author="film.release_date" field-name="Дата премьеры" :field-value="film.release_date":rating="film.rating" :rating-max="10" :img-route="'/movies/image?name=' + encodeURI(film.name)" />
+      <div v-if="!filmsPending" class="grid grid-cols-2 gap-8">
+        <Card v-for="film in films" :id="film.name" :author="film.release_date"
+              :description="truncate(film.description.replace(' Read all', ''))" :field-value="film.release_date"
+              :genres="normalizeGenres(film.genres)" :img-route="'/movies/image?name=' + encodeURI(film.name)" :rating="film.rating"
+              :rating-max="10" :title="film.name" field-name="Дата премьеры"/>
       </div>
       <div v-else>
         <p class="text-center">Загрузка...</p>
