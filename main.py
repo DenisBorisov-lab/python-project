@@ -141,9 +141,11 @@ async def get_books_image(name: str = Query(None)):
     response = FileResponse(f"./imagine_books/{name}.jpg")
     return response
 
+
 @app.get("/movies/image")
 async def get_movies_image(name: str = Query(None)):
-    pass
+    response = FileResponse(f'')
+    return response
 
 
 @app.get("/movies")
